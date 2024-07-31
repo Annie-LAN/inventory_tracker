@@ -2,7 +2,14 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { firestore } from "@/firebase";
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  Modal,
+  Typography,
+  Stack,
+  TextField,
+  Button,
+} from "@mui/material";
 import { collection, query, getDocs } from "firebase/firestore";
 
 export default function Home() {
@@ -58,7 +65,52 @@ export default function Home() {
   }, []);
 
   return (
-    <Box>
+    <Box
+      width="100vw"
+      height="100vh"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      gap={2}
+    >
+      <Modal open={open} OnClose={handleClose}>
+        <Box
+          position="absolute"
+          top="50%"
+          left="50%"
+          width={400}
+          bgcolor="white"
+          border="2px solid #000"
+          boxShadow={24}
+          p={4}
+          display="flex"
+          flexDirection="column"
+          gap={3}
+          sx={{
+            transform: "translate(-50%,-50%)",
+          }}
+        >
+          <Typography variant="h6">Add Item</Typography>
+          <Stack width="100%" direction="row" spacing={2}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              value={itemName}
+              onChange={(e) => setItemName(e.target.value)}
+            />
+            <Button
+              variant="outlined"
+              onClick={(e) => {
+                addItem(itemName);
+                setItemName("");
+                handleClose();
+              }}
+            >
+              Add
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
       <Typography variant="h1">Inventory Management</Typography>
     </Box>
   );
