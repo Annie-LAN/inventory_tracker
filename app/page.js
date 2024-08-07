@@ -19,6 +19,7 @@ import {
   setDoc,
   deleteDoc,
 } from "firebase/firestore";
+import RecipeRecommendations from "./components/RecipeRecommendations";
 
 export default function Home() {
   const [inventory, setInventory] = useState([]);
@@ -172,6 +173,7 @@ export default function Home() {
           ))}
         </Stack>
       </Box>
+      <RecipeRecommendations inventory={inventory} />
     </Box>
   );
 }
