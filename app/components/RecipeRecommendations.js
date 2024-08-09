@@ -1,9 +1,8 @@
-// app/components/RecipeRecommendations.js
 import { useState } from "react";
 import { Button, Typography, Box, Card, CardContent } from "@mui/material";
 
 export default function RecipeRecommendations({ inventory }) {
-  const [recipe, setRecipe] = useState("");
+  const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const getRecipe = async () => {
@@ -22,10 +21,14 @@ export default function RecipeRecommendations({ inventory }) {
       }
 
       const data = await response.json();
-      setRecipe(data.recipe);
+      setRecipe(data);
     } catch (error) {
       console.error("Error fetching recipe:", error);
-      setRecipe("Error fetching recipe.");
+      setRecipe({
+        name: "Error",
+        ingredients: [],
+        instructions: ["Failed to fetch recipe."],
+      });
     } finally {
       setLoading(false);
     }
@@ -34,19 +37,47 @@ export default function RecipeRecommendations({ inventory }) {
   return (
     <Card sx={{ width: "600px", mt: 4 }}>
       <CardContent>
-        <Box display="flex" alignItems="center" justifyContent="center">
+        <Box display="flex" flexDirection="column" alignItems="center">
           <Typography variant="h5" color="#333">
             Recipe Generator
           </Typography>
+          <Box my={2} display="flex" justifyContent="center" width="100%">
+            <Button variant="contained" onClick={getRecipe} disabled={loading}>
+              {loading ? "Loading..." : "Generate from Inventory"}
+            </Button>
+          </Box>
+          {recipe && (
+            <Box mt={2} width="90%">
+              <Typography variant="h6" color="#333">
+                {recipe.name}
+              </Typography>
+              <Typography variant="body1" color="#333" mt={2}>
+                Ingredients:
+              </Typography>
+              <Typography
+                variant="body1"
+                color="#333"
+                sx={{ whiteSpace: "pre-wrap", marginBottom: 2 }}
+              >
+                {recipe.ingredients
+                  .map((ingredient, index) => `- ${ingredient}\n`)
+                  .join("")}
+              </Typography>
+              <Typography variant="body1" color="#333" mt={2}>
+                Instructions:
+              </Typography>
+              <Typography
+                variant="body1"
+                color="#333"
+                sx={{ whiteSpace: "pre-wrap" }}
+              >
+                {recipe.instructions
+                  .map((instruction, index) => `${index + 1}. ${instruction}\n`)
+                  .join("")}
+              </Typography>
+            </Box>
+          )}
         </Box>
-        <Button variant="contained" onClick={getRecipe} disabled={loading}>
-          {loading ? "Loading..." : "Generate from Inventory"}
-        </Button>
-        {recipe && (
-          <Typography variant="h6" mt={2}>
-            {recipe}
-          </Typography>
-        )}
       </CardContent>
     </Card>
   );

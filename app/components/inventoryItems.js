@@ -52,19 +52,20 @@ export default function InventoryItems({ inventory, updateInventory }) {
   };
 
   return (
-    <Card sx={{ width: "600px", my: 2 }}>
+    <Card sx={{ width: "600px" }}>
       <CardContent>
         <Box
           height="40px"
           display="flex"
           alignItems="center"
           justifyContent="center"
+          paddingBottom={2}
         >
           <Typography variant="h5" color="#333">
             Inventory Items
           </Typography>
         </Box>
-        <Stack spacing={2} maxHeight="500px" overflow="auto">
+        <Stack spacing={2}>
           {inventory.map(({ name, quantity }, index) => (
             <Box key={name}>
               <Box

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import InventoryItems from "./inventoryItems";
 import AddItem from "./addItem";
-import RecipeRecommendations from "./RecipeRecommendations"; // Assuming you have this component
+import RecipeRecommendations from "./RecipeRecommendations";
 import { collection, query, getDocs } from "firebase/firestore";
 import { firestore } from "@/firebase";
 
@@ -30,7 +30,7 @@ export default function Inventory() {
   return (
     <Box
       display="flex"
-      justifyContent="space-between"
+      justifyContent="center"
       alignItems="flex-start"
       width="100%"
       padding={4}
@@ -38,7 +38,7 @@ export default function Inventory() {
       {/* Left side: Inventory Items */}
       <InventoryItems inventory={inventory} updateInventory={updateInventory} />
 
-      <Box display="flex" flexDirection="column" gap={2}>
+      <Box display="flex" flexDirection="column" marginLeft={4}>
         {/* Top Right: Add Item */}
         <AddItem updateInventory={updateInventory} />
 

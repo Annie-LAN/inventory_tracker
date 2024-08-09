@@ -42,14 +42,14 @@ export default function AddItem({ updateInventory }) {
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
   return (
-    <Card sx={{ width: "500px" }}>
+    <Card sx={{ width: "300px" }}>
       <CardContent>
         <Box display="flex" alignItems="center" justifyContent="center">
           <Typography variant="h5" color="#333">
             Add Item
           </Typography>
         </Box>
-        <Box display="flex" flexDirection="column">
+        <Box display="flex" flexDirection="column" paddingX="6%">
           <TextField
             required
             id="outlined-required"
