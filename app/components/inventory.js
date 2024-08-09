@@ -9,6 +9,8 @@ import {
   Divider,
   Snackbar,
   Alert,
+  Card,
+  CardContent,
 } from "@mui/material";
 import {
   collection,
@@ -89,11 +91,9 @@ export default function Inventory({ setInventory }) {
   return (
     <Box>
       {/* Inventory Items */}
-      <Box border="1px solid #333" boxShadow={12}>
+      <Box width="500px" border="1px solid #333" boxShadow={12} sx={{ pb: 2 }}>
         <Box
-          width="500px"
           height="60px"
-          // bgcolor="#ADD8E6"
           display="flex"
           alignItems="center"
           justifyContent="center"
@@ -102,8 +102,7 @@ export default function Inventory({ setInventory }) {
             Inventory Items
           </Typography>
         </Box>
-
-        <Stack width="500px" height="400px" spacing={2} overflow="auto">
+        <Stack spacing={2} maxHeight="500px" overflow="auto">
           {inventory.map(({ name, quantity }, index) => (
             <Box key={name}>
               <Box

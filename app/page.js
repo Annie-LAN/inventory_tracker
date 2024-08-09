@@ -13,11 +13,11 @@ export default function Home() {
     <Box
       width="100vw"
       height="100vh"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      gap={2}
+      // display="flex"
+      // flexDirection="column"
+      // justifyContent="center"
+      // alignItems="center"
+      // gap={2}
     >
       <Inventory setInventory={setInventory} />
       {/* <TestComponent /> */}
