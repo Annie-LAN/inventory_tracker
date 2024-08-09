@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import {
   Box,
-  Modal,
   Typography,
   Stack,
   TextField,
   Button,
   Divider,
-  IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   collection,
@@ -19,15 +19,13 @@ import {
   setDoc,
   deleteDoc,
 } from "firebase/firestore";
-// import AddIcon from "@mui/icons-material/Add";
-// import RemoveIcon from "@mui/icons-material/Remove";
-// import DeleteIcon from "@mui/icons-material/Delete";
 import { firestore } from "@/firebase";
 
 export default function Inventory({ setInventory }) {
   const [inventory, updateInventoryState] = useState([]);
-  const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState("");
+  const [addQuantity, setAddQuantity] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, "inventory"));
@@ -63,20 +61,26 @@ export default function Inventory({ setInventory }) {
     await updateInventory();
   };
 
-  const addItem = async (item) => {
+  const addItem = async (item, quantity) => {
+    if (isNaN(quantity) || quantity <= 0) {
+      setSnackbarOpen(true);
+      setAddQuantity("");
+      return;
+    }
+
     const docRef = doc(collection(firestore, "inventory"), item);
     const docSnap = await getDoc(docRef);
+    const newQuantity = Number(quantity);
     if (docSnap.exists()) {
       const { quantity } = docSnap.data();
-      await setDoc(docRef, { quantity: quantity + 1 });
+      await setDoc(docRef, { quantity: quantity + newQuantity });
     } else {
-      await setDoc(docRef, { quantity: 1 });
+      await setDoc(docRef, { quantity: newQuantity });
     }
     await updateInventory();
   };
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   useEffect(() => {
     updateInventory();
@@ -84,57 +88,17 @@ export default function Inventory({ setInventory }) {
 
   return (
     <Box>
-      <Modal open={open} onClose={handleClose}>
-        <Box
-          position="absolute"
-          top="50%"
-          left="50%"
-          width={400}
-          bgcolor="white"
-          border="2px solid #000"
-          boxShadow={24}
-          p={4}
-          display="flex"
-          flexDirection="column"
-          gap={3}
-          sx={{
-            transform: "translate(-50%,-50%)",
-          }}
-        >
-          <Typography variant="h6">Add Item</Typography>
-          <Stack width="100%" direction="row" spacing={2}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              value={itemName}
-              onChange={(e) => setItemName(e.target.value)}
-            />
-            <Button
-              variant="outlined"
-              onClick={() => {
-                addItem(itemName);
-                setItemName("");
-                handleClose();
-              }}
-            >
-              Add
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Button variant="contained" onClick={handleOpen}>
-        Add New Item
-      </Button>
-      <Box border="1px solid #333">
+      {/* Inventory Items */}
+      <Box border="1px solid #333" boxShadow={12}>
         <Box
           width="500px"
-          height="50px"
-          bgcolor="#ADD8E6"
+          height="60px"
+          // bgcolor="#ADD8E6"
           display="flex"
           alignItems="center"
           justifyContent="center"
         >
-          <Typography variant="h4" color="#333">
+          <Typography variant="h5" color="#333">
             Inventory Items
           </Typography>
         </Box>
@@ -146,7 +110,7 @@ export default function Inventory({ setInventory }) {
                 display="flex"
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ px: 2 }}
+                sx={{ px: 4 }}
               >
                 <Typography variant="body1" color="#333" textAlign="center">
                   {name.charAt(0).toUpperCase() + name.slice(1)}
@@ -155,36 +119,87 @@ export default function Inventory({ setInventory }) {
                   {quantity}
                 </Typography>
                 <Stack direction="row" spacing={2}>
-                  <Button variant="contained" onClick={() => addItem(name)}>
-                    Add
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => addItem(name, 1)}
+                  >
+                    Increment
                   </Button>
                   <Button
-                    variant="contained"
+                    variant="outlined"
+                    size="small"
                     onClick={() => decrementItem(name)}
                   >
                     Decrement
                   </Button>
-                </Stack>
-                {/* <Stack direction="row" spacing={2}>
-                  <IconButton color="primary" onClick={() => addItem(name)}>
-                    <AddIcon />
-                  </IconButton>
-                  <IconButton
-                    color="secondary"
-                    onClick={() => decrementItem(name)}
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => removeItem(name)}
                   >
-                    <RemoveIcon />
-                  </IconButton>
-                  <IconButton color="error" onClick={() => removeItem(name)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Stack> */}
+                    Remove
+                  </Button>
+                </Stack>
               </Box>
               {index < inventory.length - 1 && <Divider variant="middle" />}
             </Box>
           ))}
         </Stack>
       </Box>
+
+      {/* Add item  */}
+      <Box
+        width="500px"
+        border="1px solid #333"
+        boxShadow={12}
+        p={4}
+        display="flex"
+        flexDirection="column"
+      >
+        <Typography variant="h5" color="#333">
+          Add Item
+        </Typography>
+        <TextField
+          required
+          id="outlined-required"
+          label="Name"
+          defaultValue=""
+          margin="dense"
+          value={itemName}
+          onChange={(e) => setItemName(e.target.value)}
+        />
+        <TextField
+          required
+          id="outlined-required"
+          label="Quantity"
+          defaultValue=""
+          margin="dense"
+          value={addQuantity}
+          onChange={(e) => setAddQuantity(e.target.value)}
+        />
+        <Button
+          variant="contained"
+          onClick={() => {
+            addItem(itemName, addQuantity);
+            setItemName("");
+            setAddQuantity(""); // want to reset this to None
+          }}
+        >
+          Add
+        </Button>
+      </Box>
+
+      {/* Snackbar for errors */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error">
+          {"Invaid Input"}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Box } from "@mui/material";
 import Inventory from "./components/inventory";
 import RecipeRecommendations from "./components/RecipeRecommendations";
+import TestComponent from "./components/test";
 
 export default function Home() {
   const [inventory, setInventory] = useState([]);
@@ -19,6 +20,7 @@ export default function Home() {
       gap={2}
     >
       <Inventory setInventory={setInventory} />
+      {/* <TestComponent /> */}
       <RecipeRecommendations inventory={inventory} />
     </Box>
   );
