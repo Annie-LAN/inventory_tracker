@@ -94,7 +94,7 @@ export default function Inventory({ setInventory }) {
       <Card sx={{ width: "600px", my: 2 }}>
         <CardContent>
           <Box
-            height="60px"
+            height="40px"
             display="flex"
             alignItems="center"
             justifyContent="center"
@@ -152,15 +152,18 @@ export default function Inventory({ setInventory }) {
       {/* Add item */}
       <Card sx={{ width: "500px" }}>
         <CardContent>
-          <Typography variant="h5" color="#333">
-            Add Item
-          </Typography>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <Typography variant="h5" color="#333">
+              Add Item
+            </Typography>
+          </Box>
           <Box display="flex" flexDirection="column">
             <TextField
               required
               id="outlined-required"
               label="Name"
               margin="dense"
+              size="small"
               value={itemName}
               onChange={(e) => setItemName(e.target.value)}
             />
@@ -169,6 +172,7 @@ export default function Inventory({ setInventory }) {
               id="outlined-required"
               label="Quantity"
               margin="dense"
+              size="small"
               value={addQuantity}
               onChange={(e) => setAddQuantity(e.target.value)}
             />

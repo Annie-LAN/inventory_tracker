@@ -1,6 +1,6 @@
 // app/components/RecipeRecommendations.js
 import { useState } from "react";
-import { Button, Typography, Box } from "@mui/material";
+import { Button, Typography, Box, Card, CardContent } from "@mui/material";
 
 export default function RecipeRecommendations({ inventory }) {
   const [recipe, setRecipe] = useState("");
@@ -32,15 +32,22 @@ export default function RecipeRecommendations({ inventory }) {
   };
 
   return (
-    <Box mt={4}>
-      <Button variant="contained" onClick={getRecipe} disabled={loading}>
-        {loading ? "Loading..." : "Get Recipe"}
-      </Button>
-      {recipe && (
-        <Typography variant="h6" mt={2}>
-          {recipe}
-        </Typography>
-      )}
-    </Box>
+    <Card sx={{ width: "600px", mt: 4 }}>
+      <CardContent>
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <Typography variant="h5" color="#333">
+            Recipe Generator
+          </Typography>
+        </Box>
+        <Button variant="contained" onClick={getRecipe} disabled={loading}>
+          {loading ? "Loading..." : "Generate from Inventory"}
+        </Button>
+        {recipe && (
+          <Typography variant="h6" mt={2}>
+            {recipe}
+          </Typography>
+        )}
+      </CardContent>
+    </Card>
   );
 }
