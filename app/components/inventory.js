@@ -6,6 +6,7 @@ import AddItem from "./addItem";
 import RecipeRecommendations from "./RecipeRecommendations";
 import { collection, query, getDocs } from "firebase/firestore";
 import { firestore } from "@/firebase";
+import SignOut from "./signOut";
 
 export default function Inventory() {
   const [inventory, updateInventoryState] = useState([]);
@@ -39,8 +40,18 @@ export default function Inventory() {
       <InventoryItems inventory={inventory} updateInventory={updateInventory} />
 
       <Box display="flex" flexDirection="column" marginLeft={4}>
-        {/* Top Right: Add Item */}
-        <AddItem updateInventory={updateInventory} />
+        {/* Top Right */}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="flex-start"
+        >
+          {/* Add Item  */}
+          <AddItem updateInventory={updateInventory} />
+
+          {/* Sign Out Button */}
+          <SignOut />
+        </Box>
 
         {/* Bottom Right: Recipe Generator */}
         <RecipeRecommendations inventory={inventory} />
