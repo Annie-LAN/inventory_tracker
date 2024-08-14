@@ -16,7 +16,6 @@ export default function SignIn() {
 
         // The signed-in user info.
         const user = result.user;
-        // Redirect to the home page after successful sign-in
         router.push("/home");
       })
       .catch((error) => {

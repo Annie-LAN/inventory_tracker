@@ -11,12 +11,14 @@ import {
   Alert,
 } from "@mui/material";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { firestore } from "@/firebase";
+import { firestore, auth } from "@/firebase";
 
 export default function AddItem({ updateInventory }) {
   const [itemName, setItemName] = useState("");
   const [addQuantity, setAddQuantity] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const user = auth.currentUser;
 
   const addItem = async (item, quantity) => {
     if (isNaN(quantity) || quantity <= 0) {
@@ -25,18 +27,24 @@ export default function AddItem({ updateInventory }) {
       return;
     }
 
-    const docRef = doc(collection(firestore, "inventory"), item);
-    const docSnap = await getDoc(docRef);
-    const newQuantity = Number(quantity);
-    if (docSnap.exists()) {
-      const { quantity } = docSnap.data();
-      await setDoc(docRef, { quantity: quantity + newQuantity });
-    } else {
-      await setDoc(docRef, { quantity: newQuantity });
+    if (user) {
+      const userId = user.uid;
+      const docRef = doc(
+        collection(firestore, `users/${userId}/inventory`),
+        item
+      );
+      const docSnap = await getDoc(docRef);
+      const newQuantity = Number(quantity);
+      if (docSnap.exists()) {
+        const { quantity } = docSnap.data();
+        await setDoc(docRef, { quantity: quantity + newQuantity });
+      } else {
+        await setDoc(docRef, { quantity: newQuantity });
+      }
+      await updateInventory();
+      setItemName("");
+      setAddQuantity("");
     }
-    await updateInventory();
-    setItemName("");
-    setAddQuantity("");
   };
 
   const handleSnackbarClose = () => setSnackbarOpen(false);

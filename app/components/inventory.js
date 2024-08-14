@@ -5,28 +5,34 @@ import InventoryItems from "./inventoryItems";
 import AddItem from "./addItem";
 import RecipeRecommendations from "./RecipeRecommendations";
 import { collection, query, getDocs } from "firebase/firestore";
-import { firestore } from "@/firebase";
+import { firestore, auth } from "@/firebase";
 import SignOut from "./signOut";
 
 export default function Inventory() {
   const [inventory, updateInventoryState] = useState([]);
+  const user = auth.currentUser;
 
   const updateInventory = async () => {
-    const snapshot = query(collection(firestore, "inventory"));
-    const docs = await getDocs(snapshot);
-    const inventoryList = [];
-    docs.forEach((doc) => {
-      inventoryList.push({
-        name: doc.id,
-        ...doc.data(),
+    if (user) {
+      const userId = user.uid;
+      const snapshot = query(
+        collection(firestore, `users/${userId}/inventory`)
+      );
+      const docs = await getDocs(snapshot);
+      const inventoryList = [];
+      docs.forEach((doc) => {
+        inventoryList.push({
+          name: doc.id,
+          ...doc.data(),
+        });
       });
-    });
-    updateInventoryState(inventoryList);
+      updateInventoryState(inventoryList);
+    }
   };
 
   useEffect(() => {
     updateInventory();
-  }, []);
+  }, [user]);
 
   return (
     <Box

@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -9,46 +8,49 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import {
-  collection,
-  query,
-  getDocs,
-  doc,
-  getDoc,
-  setDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import { firestore } from "@/firebase";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { firestore, auth } from "@/firebase";
 
 export default function InventoryItems({ inventory, updateInventory }) {
+  const user = auth.currentUser;
+
   const removeItem = async (item) => {
-    const docRef = doc(collection(firestore, "inventory"), item);
-    await deleteDoc(docRef);
-    await updateInventory();
+    if (user) {
+      const userId = user.uid;
+      const docRef = doc(firestore, `users/${userId}/inventory`, item);
+      await deleteDoc(docRef);
+      await updateInventory();
+    }
   };
 
   const decrementItem = async (item) => {
-    const docRef = doc(collection(firestore, "inventory"), item);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const { quantity } = docSnap.data();
-      if (quantity === 1) {
-        await deleteDoc(docRef);
-      } else {
-        await setDoc(docRef, { quantity: quantity - 1 });
+    if (user) {
+      const userId = user.uid;
+      const docRef = doc(firestore, `users/${userId}/inventory`, item);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const { quantity } = docSnap.data();
+        if (quantity === 1) {
+          await deleteDoc(docRef);
+        } else {
+          await setDoc(docRef, { quantity: quantity - 1 });
+        }
       }
+      await updateInventory();
     }
-    await updateInventory();
   };
 
   const incrementItem = async (item) => {
-    const docRef = doc(collection(firestore, "inventory"), item);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const { quantity } = docSnap.data();
-      await setDoc(docRef, { quantity: quantity + 1 });
+    if (user) {
+      const userId = user.uid;
+      const docRef = doc(firestore, `users/${userId}/inventory`, item);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const { quantity } = docSnap.data();
+        await setDoc(docRef, { quantity: quantity + 1 });
+      }
+      await updateInventory();
     }
-    await updateInventory();
   };
 
   return (
