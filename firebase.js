@@ -24,4 +24,4 @@ const auth = getAuth();
 auth.languageCode = "en"; // set authentication language to English
 const provider = new GoogleAuthProvider();
 
-export { firestore, provider };
+export { firestore, auth, provider };
