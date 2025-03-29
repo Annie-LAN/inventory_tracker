@@ -1,4 +1,5 @@
-**Inventory Tracker**  
+# Inventory Tracker
+
 [Visit the Inventory Tracker](https://inventorytracker-annie-lans-projects.vercel.app/)
 
 - **Technologies Used**: React, Next.js, Firebase, Material-UI
